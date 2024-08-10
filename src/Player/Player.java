@@ -7,28 +7,76 @@ import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 
 public class Player {
-    Socket socket;
-    PrintStream outputStream;
-    BufferedReader inputStream;
+    private static String name;
+    private static Socket socket;
+    private static PrintStream outputStream;
+    private static BufferedReader inputStream;
     
     public static void main(String[] args) {
-        InitializeSocket();
+        initializeSocket();
+        name = args[0];
+        while (true) {
+            printOptions();
+            int option = getUsersOption();
+            Options.doOption(option);
+        }
     }
 
-    private static void InitializeSocket() {
+
+    private static void initializeSocket() {
         try {
-            Socket socket = new Socket(InetAddress.getLocalHost().getHostAddress(), 3728);
-            PrintStream outputStream = new PrintStream(socket.getOutputStream());
-            BufferedReader inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            socket = new Socket(InetAddress.getLocalHost().getHostAddress(), 3728);
+            outputStream = new PrintStream(socket.getOutputStream());
+            inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             return;
         } catch (UnknownHostException e) {
             System.out.println("Error: Manager IP address could not be resolved.");
+            System.exit(1); // Terminate when there is an error
         } catch (IOException e) {
             System.out.println("Error: Socket could not be created.");
-        } finally {
             System.exit(1); // Terminate when there is an error
         }
+    }
+
+    public static void printOptions() {
+        System.out.println("  1. Register");
+        System.out.println("  2. View Online Players");
+        System.out.println("  3. View Ongoing Games");
+        System.out.println("  4. Unregister");
+        System.out.println("  5. Start game");
+        System.out.println(" 99. Exit");
+    }
+
+    private static int getUsersOption() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter your choice: ");
+        int option = scanner.nextInt();
+
+        for (int i : new int[]{1, 2, 3, 4, 5, 99})
+            if (i == option)
+                return option;
+
+        System.out.println("Error: Invalid choice. Please type one of the numbers above.");
+        return getUsersOption();
+    }
+
+    public static String getName() {
+        return name;
+    }
+
+    public static Socket getSocket() {
+        return socket;
+    }
+
+    public static PrintStream getOutputStream() {
+        return outputStream;
+    }
+
+    public static BufferedReader getInputStream() {
+        return inputStream;
     }
 }
