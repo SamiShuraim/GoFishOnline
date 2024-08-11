@@ -1,12 +1,15 @@
 package Manager;
 
+import Actions.ManagerActions;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 
-public class ManagerThread extends Manager implements Runnable{
+public class ManagerThread extends Manager implements Runnable {
+    ManagerActions managerOptions;
     Socket dataSocket;
     PrintStream outputStream;
     BufferedReader inputStream;
@@ -16,6 +19,7 @@ public class ManagerThread extends Manager implements Runnable{
             this.dataSocket = dataSocket;
             outputStream = new PrintStream(dataSocket.getOutputStream());
             inputStream = new BufferedReader(new InputStreamReader(dataSocket.getInputStream()));
+            managerOptions = new ManagerActions(dataSocket, outputStream, inputStream, getPlayersTable(), getGamesTable());
         } catch (IOException e) {
             System.out.println("Error: Could not create streams or socket is not connected.");
             System.exit(1); // Terminate when there is an error.
@@ -23,12 +27,18 @@ public class ManagerThread extends Manager implements Runnable{
     }
     @Override
     public void run() {
-        try {
-            String message = inputStream.readLine();
-            System.out.println(message);
-            outputStream.println("Received");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        while (true) {
+            try {
+                String[] decryptedMessage = managerOptions.decryptMessage(inputStream.readLine());
+
+                managerOptions.setMessage(decryptedMessage);
+                String answer = managerOptions.doOption(Integer.parseInt(decryptedMessage[0]));
+
+                System.out.println(answer);
+                outputStream.println(answer);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

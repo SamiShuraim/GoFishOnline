@@ -1,4 +1,4 @@
-package Manager;
+package Database;
 
 import com.mongodb.*;
 import com.mongodb.client.MongoClient;
@@ -31,18 +31,17 @@ public class MongoClientConnection {
                 .serverApi(serverApi)
                 .build();
         // Create a new client and connect to the server
-        try (MongoClient mongoClient = MongoClients.create(settings)) {
-            try {
-                // Send a ping to confirm a successful connection
-                database = mongoClient.getDatabase("GoFishOnline");
-                playersTable = database.getCollection("Players");
-                gamesTable = database.getCollection("Games");
-                database.runCommand(new Document("ping", 1));
-                System.out.println("Database connected.");
-            } catch (MongoException e) {
-                System.out.println("Error: Cannot connect to database.");
-                System.exit(2);
-            }
+        MongoClient mongoClient = MongoClients.create(settings);
+        try {
+            // Send a ping to confirm a successful connection
+            database = mongoClient.getDatabase("GoFishOnline");
+            playersTable = database.getCollection("Players");
+            gamesTable = database.getCollection("Games");
+            database.runCommand(new Document("ping", 1));
+            System.out.println("Database connected.");
+        } catch (MongoException e) {
+            System.out.println("Error: Cannot connect to database.");
+            System.exit(2);
         }
     }
 

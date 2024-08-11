@@ -1,5 +1,7 @@
 package Player;
 
+import Actions.PlayerActions;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,14 +16,19 @@ public class Player {
     private static Socket socket;
     private static PrintStream outputStream;
     private static BufferedReader inputStream;
-    
-    public static void main(String[] args) {
+
+    private static PlayerActions playerOptions;
+
+    public static void main(String[] args) throws IOException {
         initializeSocket();
         name = args[0];
+        playerOptions = new PlayerActions(name, socket, outputStream, inputStream);
         while (true) {
             printOptions();
             int option = getUsersOption();
-            Options.doOption(option);
+
+            String answer = playerOptions.doOption(option);
+            System.out.println(answer);
         }
     }
 
