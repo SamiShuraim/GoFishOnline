@@ -2,13 +2,16 @@ package Actions;
 
 import Objects.PlayerObject;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Projections;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import java.io.BufferedReader;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 public class ManagerActions extends Actions {
     private Socket socket;
@@ -26,6 +29,8 @@ public class ManagerActions extends Actions {
     public String register() { // Example message: 1=Sami=192.168.0.1
         try {
             PlayerObject playerObject = new PlayerObject(message[1], InetAddress.getByName(message[2]));
+//            playersTable.find(new Document(playerObject.toMap()));
+
             playersTable.insertOne(new Document(playerObject.toMap()));
             return "Player registered Successfully.";
         } catch (UnknownHostException e) {
@@ -36,7 +41,16 @@ public class ManagerActions extends Actions {
 
     @Override
     public String viewOnlinePlayers() {
-        return null;
+        ArrayList<String> res = new ArrayList<>();
+
+        Bson projection = Projections.fields(Projections.excludeId());
+        playersTable.find().projection(projection).forEach((o) -> {
+            Document p = (Document) o;
+            res.add((String) p.get("name"));
+            res.add((String) p.get("address"));
+        });
+
+        return encryptMessage(res);
     }
 
     @Override

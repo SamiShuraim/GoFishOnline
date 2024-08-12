@@ -17,17 +17,17 @@ public class Player {
     private static PrintStream outputStream;
     private static BufferedReader inputStream;
 
-    private static PlayerActions playerOptions;
+    private static PlayerActions playerActions;
 
     public static void main(String[] args) throws IOException {
         initializeSocket();
         name = args[0];
-        playerOptions = new PlayerActions(name, socket, outputStream, inputStream);
+        playerActions = new PlayerActions(name, socket, outputStream, inputStream);
         while (true) {
             printOptions();
             int option = getUsersOption();
 
-            String answer = playerOptions.doOption(option);
+            String answer = playerActions.doOption(option);
             System.out.println(answer);
         }
     }

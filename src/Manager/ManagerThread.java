@@ -9,7 +9,7 @@ import java.io.PrintStream;
 import java.net.Socket;
 
 public class ManagerThread extends Manager implements Runnable {
-    ManagerActions managerOptions;
+    ManagerActions managerActions;
     Socket dataSocket;
     PrintStream outputStream;
     BufferedReader inputStream;
@@ -19,7 +19,7 @@ public class ManagerThread extends Manager implements Runnable {
             this.dataSocket = dataSocket;
             outputStream = new PrintStream(dataSocket.getOutputStream());
             inputStream = new BufferedReader(new InputStreamReader(dataSocket.getInputStream()));
-            managerOptions = new ManagerActions(dataSocket, outputStream, inputStream, getPlayersTable(), getGamesTable());
+            managerActions = new ManagerActions(dataSocket, outputStream, inputStream, getPlayersTable(), getGamesTable());
         } catch (IOException e) {
             System.out.println("Error: Could not create streams or socket is not connected.");
             System.exit(1); // Terminate when there is an error.
@@ -29,10 +29,10 @@ public class ManagerThread extends Manager implements Runnable {
     public void run() {
         while (true) {
             try {
-                String[] decryptedMessage = managerOptions.decryptMessage(inputStream.readLine());
+                String[] decryptedMessage = managerActions.decryptMessage(inputStream.readLine());
 
-                managerOptions.setMessage(decryptedMessage);
-                String answer = managerOptions.doOption(Integer.parseInt(decryptedMessage[0]));
+                managerActions.setMessage(decryptedMessage);
+                String answer = managerActions.doOption(Integer.parseInt(decryptedMessage[0]));
 
                 System.out.println(answer);
                 outputStream.println(answer);

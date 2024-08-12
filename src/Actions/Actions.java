@@ -3,6 +3,7 @@ package Actions;
 import java.io.BufferedReader;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public abstract class Actions {
     String name;
@@ -46,6 +47,17 @@ public abstract class Actions {
 
         for (String s : rawMessage)
             res += s + "=";
+
+        res = res.substring(0, res.lastIndexOf("="));
+        return res;
+    }
+
+    public String encryptMessage(ArrayList<String> rawMessage) {
+        String res = "";
+
+        for (String s : rawMessage) {
+            res += s + "=";
+        }
 
         res = res.substring(0, res.lastIndexOf("="));
         return res;
