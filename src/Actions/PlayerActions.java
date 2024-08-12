@@ -40,7 +40,15 @@ public class PlayerActions extends Actions {
     }
 
     public String unregister() {
-        return "true";
+        // Send req
+        outputStream.println(encryptMessage(new String[]{"4", name, socket.getInetAddress().getHostAddress()}));
+
+        // Print message
+        try {
+            return inputStream.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String startGame() {

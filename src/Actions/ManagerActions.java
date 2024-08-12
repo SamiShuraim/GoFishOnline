@@ -2,6 +2,7 @@ package Actions;
 
 import Objects.PlayerObject;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -28,9 +29,13 @@ public class ManagerActions extends Actions {
     @Override
     public String register() { // Example message: 1=Sami=192.168.0.1
         try {
-            PlayerObject playerObject = new PlayerObject(message[1], InetAddress.getByName(message[2]));
-//            playersTable.find(new Document(playerObject.toMap()));
+            Bson filter = Filters.and(Filters.eq("name", message[1]), Filters.eq("address", message[2]));
+            boolean alreadyExists = playersTable.find(filter).first() != null;
 
+            if (alreadyExists)
+                return "Error: Player already registered";
+
+            PlayerObject playerObject = new PlayerObject(message[1], InetAddress.getByName(message[2]));
             playersTable.insertOne(new Document(playerObject.toMap()));
             return "Player registered Successfully.";
         } catch (UnknownHostException e) {
@@ -60,7 +65,14 @@ public class ManagerActions extends Actions {
 
     @Override
     public String unregister() {
-        return null;
+        try {
+            PlayerObject playerObject = new PlayerObject(message[1], InetAddress.getByName(message[2]));
+            playersTable.deleteOne(new Document(playerObject.toMap()));
+            return "Player unregistered successfully.";
+        } catch (UnknownHostException e) {
+            return "Error: Player could not be unregistred";
+        }
+
     }
 
     @Override
