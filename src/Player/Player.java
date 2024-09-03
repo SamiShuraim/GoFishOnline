@@ -19,7 +19,7 @@ public class Player {
 
     private static PlayerActions playerActions;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         initializeSocket();
         name = args[0];
         playerActions = new PlayerActions(name, socket, outputStream, inputStream);
@@ -38,7 +38,6 @@ public class Player {
             socket = new Socket(InetAddress.getLocalHost().getHostAddress(), 3728);
             outputStream = new PrintStream(socket.getOutputStream());
             inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            return;
         } catch (UnknownHostException e) {
             System.out.println("Error: Manager IP address could not be resolved.");
             System.exit(1); // Terminate when there is an error

@@ -1,4 +1,4 @@
 package Objects;
 
-public class GameObject {
+public record GameObject() {
 }

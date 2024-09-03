@@ -3,22 +3,7 @@ package Objects;
 import java.net.InetAddress;
 import java.util.HashMap;
 
-public class PlayerObject {
-    private String name;
-    private InetAddress address;
-
-    public PlayerObject(String name, InetAddress address) {
-        this.name = name;
-        this.address = address;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public InetAddress getAddress() {
-        return address;
-    }
+public record PlayerObject(String name, InetAddress address) {
 
     public HashMap<String, String> toMap() {
         HashMap<String, String> res = new HashMap<>();

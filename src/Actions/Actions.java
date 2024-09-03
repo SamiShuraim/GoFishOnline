@@ -45,24 +45,24 @@ public abstract class Actions {
     }
 
     public String encryptMessage(String[] rawMessage) {
-        String res = "";
+        StringBuilder res = new StringBuilder();
 
         for (String s : rawMessage)
-            res += s + "=";
+            res.append(s).append("=");
 
-        res = res.substring(0, res.lastIndexOf("="));
-        return res;
+        res = new StringBuilder(res.substring(0, res.lastIndexOf("=")));
+        return res.toString();
     }
 
     public String encryptMessage(ArrayList<String> rawMessage) {
-        String res = "";
+        StringBuilder res = new StringBuilder();
 
         for (String s : rawMessage) {
-            res += s + "=";
+            res.append(s).append("=");
         }
 
-        res = res.substring(0, res.lastIndexOf("="));
-        return res;
+        res = new StringBuilder(res.substring(0, res.lastIndexOf("=")));
+        return res.toString();
     }
 
     public String[] decryptMessage(String message) {

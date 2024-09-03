@@ -67,16 +67,6 @@ public class PlayerActions extends Actions {
         return "";
     }
 
-    public String encryptMessage(String[] rawMessage) {
-        String res = "";
-
-        for (String s : rawMessage)
-            res += s + "=";
-
-        res = res.substring(0, res.lastIndexOf("="));
-        return res;
-    }
-
     private String getOnlinePlayersTabularForm(String answer) {
         String[] decryptedMessage = decryptMessage(answer);
         String res = "";
