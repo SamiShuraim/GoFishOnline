@@ -1,9 +1,11 @@
 package Actions;
 
 import Objects.PlayerObject;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
+import com.mongodb.client.result.DeleteResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
@@ -17,8 +19,8 @@ import java.util.ArrayList;
 public class ManagerActions extends Actions {
     private Socket socket;
     private String[] message;
-    private MongoCollection playersTable;
-    private MongoCollection gamesTable;
+    private final MongoCollection playersTable;
+    private final MongoCollection gamesTable;
 
     public ManagerActions(Socket socket, PrintStream outputStream, BufferedReader inputStream, MongoCollection playersTable, MongoCollection gamesTable) {
         super(null, socket, outputStream, inputStream);
@@ -46,10 +48,15 @@ public class ManagerActions extends Actions {
 
     @Override
     public String viewOnlinePlayers() {
+        Bson projection = Projections.fields(Projections.excludeId());
+        FindIterable players = playersTable.find().projection(projection);
+
+        if (players.first() == null)
+            return "none";
+
         ArrayList<String> res = new ArrayList<>();
 
-        Bson projection = Projections.fields(Projections.excludeId());
-        playersTable.find().projection(projection).forEach((o) -> {
+        players.forEach((o) -> {
             Document p = (Document) o;
             res.add((String) p.get("name"));
             res.add((String) p.get("address"));
@@ -67,21 +74,18 @@ public class ManagerActions extends Actions {
     public String unregister() {
         try {
             PlayerObject playerObject = new PlayerObject(message[1], InetAddress.getByName(message[2]));
-            playersTable.deleteOne(new Document(playerObject.toMap()));
-            return "Player unregistered successfully.";
+            DeleteResult res = playersTable.deleteOne(new Document(playerObject.toMap()));
+            if (res.getDeletedCount() > 0)
+                return "Player unregistered successfully.";
+            return "Player not registered.";
         } catch (UnknownHostException e) {
-            return "Error: Player could not be unregistred";
+            return "Error: Player could not be unregistered";
         }
 
     }
 
     @Override
     public String startGame() {
-        return null;
-    }
-
-    @Override
-    public String exit() {
         return null;
     }
 

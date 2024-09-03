@@ -29,6 +29,10 @@ public class PlayerActions extends Actions {
         // Print message
         try {
             String answer = inputStream.readLine();
+
+            if (answer.equals("none"))
+                return "No players are currently online.";
+
             return getOnlinePlayersTabularForm(answer);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -56,7 +60,11 @@ public class PlayerActions extends Actions {
     }
 
     public String exit() {
-        return "true";
+        System.out.println("Trying to unregister you...");
+        System.out.println(unregister());
+        System.out.println("See you soon...");
+        System.exit(0);
+        return "";
     }
 
     public String encryptMessage(String[] rawMessage) {

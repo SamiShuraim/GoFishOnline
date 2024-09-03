@@ -40,7 +40,9 @@ public abstract class Actions {
 
     public abstract String startGame();
 
-    public abstract String exit();
+    public String exit() {
+        return "";
+    }
 
     public String encryptMessage(String[] rawMessage) {
         String res = "";
